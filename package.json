@@ -1,0 +1,13 @@
+{
+  "name": "learning-lab",
+  "version": "1.0.0",
+  "main": "exec.js",
+  "type": "module",
+  "scripts": {
+    "start": "node exec.js",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "author": "WenHsi",
+  "license": "ISC",
+  "description": "A personal project repository for experimenting and practicing coding exercises and implementations."
+}
