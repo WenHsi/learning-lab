@@ -2,7 +2,7 @@ class Algo {
     constructor() {
         this.name = this._firstLetterLower(this.constructor.name);
     }
-    exec(version, ...data) {
+    exec(version, data) {
         this.verify(...data);
         this.validateVersion(version);
         this.showExecInfo(version);
@@ -13,6 +13,9 @@ class Algo {
         console.warn("Result:");
         console.warn(result);
         return result;
+    }
+    input(...data) {
+        return data;
     }
     verify() {
         throw Error("Must override 'verify' method.")
@@ -30,7 +33,7 @@ class Algo {
     }
 
     // Test different version performance.
-    test(...amount) {
+    test(amount) {
         this.verify(...amount);
         const versions = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(name => {
             return name.startsWith(this.name) &&
@@ -87,7 +90,7 @@ export class Reverse extends Algo {
     reverse4(str) {
         return str.split('').reverse().join('');
     }
-    test(amount='a'.repeat(1000000)) {
+    test(amount=['a'.repeat(1000000)]) {
         super.test(amount);
     }
 }
@@ -100,6 +103,7 @@ export class MergeSortedArrays extends Algo {
         if (!Array.isArray(arr1) || !Array.isArray(arr2)) throw new Error("Invalid input");
     }
     mergeSortedArrays(version, arr1, arr2) {
+        // [-2, 0,3,4,67,887,3442], [-323,0,24,523]
         if (arr1.length === 0) return arr2;
         if (arr2.length === 0) return arr1;
         return this[this.name+version](arr1, arr2);
@@ -135,13 +139,13 @@ export class MergeSortedArrays extends Algo {
         let i = 1;
         let j = 1;
 
-        while(item1 || item2) {
+        while(item1 !== undefined || item2 !== undefined) {
             if (_shouldShiftFirstArrayItem(item1, item2)) {
-                result.push(item1);
+                result.push(+item1);
                 item1 = arr1[i];
                 i++;
             } else {
-                result.push(item2);
+                result.push(+item2);
                 item2 = arr2[j];
                 j++;
             }
@@ -149,10 +153,45 @@ export class MergeSortedArrays extends Algo {
         return result;
 
         function _shouldShiftFirstArrayItem(item1, item2) {
-            return !item2 || item1 < item2;
+            return item2 === undefined || item1 < item2;
         }
     }
-    test(...amount) {
-        super.test(...amount);
+    test(amount) {
+        super.test(amount);
+    }
+}
+
+export class firstRecurringCharacter extends Algo {
+    //  Google Question
+    // [2,5,1,2,3,5,1,2,4] return 2
+    // [2,1,1,2,3,5,1,2,4] return 1
+    // [2,3,4,5] return undefined
+    // [2,5,5,2,3,5,1,2,4] return 5
+    // bonus: 新增指定出現次數。預設一樣為 2;
+    constructor() {
+        super();
+    }
+    verify(arr) {
+        if (!Array.isArray(arr)) throw new Error("Invalid input");
+    }
+    firstRecurringCharacter(version, arr, bound) {
+        if (arr.length < 2) return undefined;
+        return this[this.name+version](arr, bound);
+    }
+    firstRecurringCharacter1(arr, bound=2) {
+        if (bound === 1) return arr[0];
+        this.map = {};
+        for (const i of arr) {
+            if (!this.map[i]) {
+                this.map[i] = 1;
+                continue;
+            }
+            this.map[i]++;
+            if (this.map[i] === bound) return i;
+        }
+        return undefined;
+    }
+    test(amount=[2,5,1,2,3,5,1,2,4], bound) {
+        super.test([amount, bound]);
     }
 }
