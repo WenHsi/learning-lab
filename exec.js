@@ -3,12 +3,12 @@ import * as myArray from './main/myArray.js';
 import myHashTable from './main/myHashTable.js';
 
 try {
-    const exec = new Algo.firstRecurringCharacter();
-    const input = exec.input.bind(this)([2,5,5,2,3,1,4,1,1,4], 3);
+    const exec = new Algo.PairOfArray();
+    const input = exec.input.bind(this)([1,2,3,4,5,6]);
     const version = 1;
 
     exec.exec(version, input);
-    exec.test(input);
+    exec.test(...input);
 } catch (err) {
     console.error(err);
 }

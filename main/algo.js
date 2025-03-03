@@ -195,3 +195,68 @@ export class firstRecurringCharacter extends Algo {
         super.test([amount, bound]);
     }
 }
+
+export class ContainsCommonItem extends Algo {
+    // 兩個陣列，比較是否有交集的值
+    // ['d','r','t','p'] ['a','f','z'] return false
+    // ['d','r','t','p'] ['a','f','z','r'] return true
+    constructor() {
+        super();
+    }
+    verify(arr1, arr2) {
+        if (!Array.isArray(arr1) && !Array.isArray(arr2)) throw new Error("Invalid input");
+    }
+    containsCommonItem(version, arr1, arr2) {
+        if (arr1.length === 0 || arr2.length === 0) return false;
+        return this[this.name+version](arr1, arr2);
+    }
+    containsCommonItem1(arr1, arr2) {
+        for (let i = 0; i < arr1.length; i++) {
+            for (let j = 0; j < arr2.length; j++) {
+                if (arr1[i] === arr2[j]) return true;
+            }
+        }
+        return false;
+    }
+    containsCommonItem2(arr1, arr2) {
+        const mainMap = {};
+        for (const n of arr1) {
+            if (!mainMap[n]) {
+                mainMap[n] = true;
+            }
+        }
+        for (const check of arr2) {
+            if (mainMap[check]) return true;
+        }
+        return false;
+    }
+    test(arr1, arr2) {
+        super.test([arr1, arr2]);
+    }
+}
+export class PairOfArray extends Algo {
+    // [1,2,3,4,5,6]
+    // => [1,2] [1,3]...[2,3][2,4]...
+    constructor() {
+        super();
+    }
+    verify(arr) {
+        if (!Array.isArray(arr)) throw new Error("Invalid input");
+    }
+    pairOfArray(version, arr) {
+        if (arr.length < 2) throw new Error("no pair");
+        return this[this.name+version](arr);
+    }
+    pairOfArray1(arr) {
+        const result = [];
+        for (let i = 0; i < arr.length-1; i++) {
+            for (let j = 1 + i; j < arr.length; j++) {
+                result.push([arr[i], arr[j]]);
+            }
+        }
+        return result;
+    }
+    test(arr) {
+        super.test([arr]);
+    }
+}
