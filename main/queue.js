@@ -9,27 +9,17 @@ class Queue {
     }
     async dequeue() {
         if (!this.queue.length) {
-            const id = await this._waitEvent();
-            return id;
+            await new Promise(resolve => this.channel.push(resolve));
         }
         return this.queue.shift();
     }
     async _emit() {
-        if (! this.channel.length) return;
+        if (!this.channel.length) return;
 
         const random = Math.floor(Math.random() * this.channel.length);
-        const request = this.channel[random];
-        request(this.queue.shift());
+        // 執行通道裡的 resolve()
+        this.channel[random]();
         this.channel.splice(random, 1);
-    }
-    async _waitEvent() {
-        const result = await new Promise((resolve) => {
-            this.channel.push(_request);
-            function _request(id) {
-                resolve(id);
-            }
-        })
-        return result;
     }
 }
 
