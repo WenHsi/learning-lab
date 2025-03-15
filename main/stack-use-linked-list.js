@@ -29,6 +29,8 @@ class Stack {
     }
     pop() {
         if (!this.length) return null;
+        if (this.top === this.bottom) this.bottom = null;
+        
         this.top = this.top.next;
         this.length--;
         return this.length;
