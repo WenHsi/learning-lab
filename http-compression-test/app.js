@@ -1,6 +1,6 @@
 const http = require("http");
 const fs = require("fs").promises;
-const { gunzip, gzip } = require("zlib");
+const zlib = require("zlib");
 
 const server = http.createServer(async(req, res) => {
     if (req.url === "/") {
@@ -20,52 +20,36 @@ const server = http.createServer(async(req, res) => {
     } else if (req.url === "/getData") {
         if (req.method === "POST") {
             let chunks = [];
-            req.on('data', (chunk) => {
+
+            // Decoding request body
+            const stream = req.pipe(zlib.createGunzip());
+
+            stream.on('data', (chunk) => {
                 chunks.push(chunk);
             })
-            req.on('end', async () => {
+            stream.on('end', async () => {
                 const buffer = Buffer.concat(chunks);
                 try {
-                    // Decoding request body
-                    const reqBody = await new Promise((resolve, reject) => {
-                        gunzip(buffer, (err, buffer) => {
-                            if (err) {
-                                reject("Gunzip error: "+ err.message);
-                                return;
-                            }
-                            resolve(buffer.toString());
-                        })
-                    });
-                    console.log("Successfully parsed the request body:", reqBody.toString().slice(0, 100) + "....");;
+                    console.log("Successfully parsed the request body:", buffer.toString().slice(0, 100) + "....");
 
-                    // Encoding response body
                     let resData = `{ version: '1.0', distractedStudents: { distractedStudents: [] } }`; // or { Error: 'No info provided' }
-                    const resDataBuffer = Buffer.from(resData);
-                    resData = await new Promise((resolve, reject) => {
-                        gzip(resDataBuffer, (err, buffer) => {
-                            if (err) {
-                                reject("Gzip error: " + err.message);
-                                return;
-                            }
-                            resolve(buffer);
-                        })
-                    })
-
                     res.setHeader('Content-Type', 'application/json');
                     res.setHeader('Content-Encoding', 'gzip');
-                    res.setHeader('Content-Length', resData.length);
                     res.writeHead(200);
-                    res.end(resData);
+                    // Encoding response body
+                    const gzip = zlib.createGzip();
+                    gzip.pipe(res);
+                    gzip.end(resData);
                     return;
                 } catch (err) {
-                    // console.log(err);
+                    console.log(err);
                     res.setHeader('Content-Type', 'application/json');
                     res.writeHead(500);
                     res.end(JSON.stringify({ Error: 'Unsupported request version' }));
                     return;
                 }
             })
-            req.on('error', (err) => {
+            stream.on('error', (err) => {
                 res.writeHead(400);
                 res.end("Error!" + JSON.stringify(err));
                 return;

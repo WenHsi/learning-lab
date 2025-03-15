@@ -2,7 +2,7 @@
   "name": "learning-lab",
   "version": "1.0.0",
   "main": "exec.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node exec.js",
     "test": "echo \"No test specified\" && exit 0"
