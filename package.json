@@ -9,5 +9,8 @@
   },
   "author": "WenHsi",
   "license": "ISC",
-  "description": "A personal project repository for experimenting and practicing coding exercises and implementations."
+  "description": "A personal project repository for experimenting and practicing coding exercises and implementations.",
+  "dependencies": {
+    "nodemon": "^3.1.9"
+  }
 }
